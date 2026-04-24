@@ -30,6 +30,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/api/users").hasRole("ADMIN")
+                                .requestMatchers("/api/test/jwt").permitAll()
                                 //.requestMatchers(HttpMethod.GET, "/**").permitAll()
                                 //for all other http requests auth is required
                                 .anyRequest().authenticated()
