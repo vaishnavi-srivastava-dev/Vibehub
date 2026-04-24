@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -32,6 +34,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String token = null;
         String username = null;
+        String role = null;
 
         if(authHeader != null && authHeader.startsWith("Bearer"))
         {
@@ -40,6 +43,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             //extract username from real token
             username = jwtUtil.extractUsername(token);
+            //role = ;
+
         }
 
         //user should not be logged in already. No sessions (as no form login)
@@ -49,11 +54,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             //userDetails is needed as we do not have authorities(ROLE) in the token.
             //an upgraded version of this would be to add authorities in token itself.
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+
+            //UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                     null,
                     null,
-                    userDetails.getAuthorities()
+                    List.of(new SimpleGrantedAuthority("ROLE_" + role))
+                    //userDetails.getAuthorities()
+                  //  List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
                     );
 
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -64,5 +73,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         //add to filter
         //forward request
         filterChain.doFilter(request,response);
+
+        System.out.println("Token added to config");
     }
 }
