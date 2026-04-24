@@ -1,6 +1,7 @@
 package com.myorg.vibehub.service;
 
 import com.myorg.vibehub.dto.request.CountryRequestDto;
+import com.myorg.vibehub.dto.request.LoginRequestDto;
 import com.myorg.vibehub.dto.request.ProfilePictureRequestDto;
 import com.myorg.vibehub.dto.request.UserRequestDto;
 import com.myorg.vibehub.dto.response.CountryResponseDto;
@@ -13,7 +14,9 @@ import com.myorg.vibehub.repository.CountryRepositiry;
 import com.myorg.vibehub.repository.NumberOfUserRepository;
 import com.myorg.vibehub.repository.ProfilePictureRepository;
 import com.myorg.vibehub.repository.UserRepository;
+import com.myorg.vibehub.utility.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +30,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @Autowired
     private ProfilePictureRepository profilePictureRepository;
@@ -240,6 +249,31 @@ public class UserServiceImpl implements UserService {
         genericResponseDto.setDetails(Map.of("country id",user.getCountry().getId()));
         genericResponseDto.setMessage(user.getName()+"'s Country has been uploaded successfully!");
         return genericResponseDto;
+    }
+
+    @Override
+    public GenericResponseDto login(LoginRequestDto loginRequestDto) {
+      User user = (User) userDetailsService.loadUserByUsername(loginRequestDto.getUsername());
+      String password = user.getPassword();
+
+      GenericResponseDto genericResponseDto = new GenericResponseDto();
+
+      //check if raw password from login matches the user password
+      if(passwordEncoder.matches(loginRequestDto.getPassword(), password)){
+          //if matched - generate token.
+          //generatetoken is a method we made in jwtUtil so make its bean
+          String token = jwtUtil.generateToken(user.getUsername());
+
+          //if all good, add details in generic response dto
+          genericResponseDto.setIsSuccess(true);
+          genericResponseDto.setMessage("User Authenticated");
+          genericResponseDto.setDetails(Map.of("Access Token: ",token));
+      }else {
+          genericResponseDto.setIsSuccess(false);
+          genericResponseDto.setMessage("User Authentication Failed");
+      }
+
+      return genericResponseDto;
     }
 
 

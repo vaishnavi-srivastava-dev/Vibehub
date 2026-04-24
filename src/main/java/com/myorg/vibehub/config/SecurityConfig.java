@@ -1,5 +1,6 @@
 package com.myorg.vibehub.config;
 
+import com.myorg.vibehub.filter.JwtAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -12,9 +13,19 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
+
+    //@Autowired- not doing because it can create issues in testing, instead do this-
+    private final JwtAuthFilter jwtAuthFilter;
+
+    //make sure security config doesn't work until it has jwtAuthFilter bean
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter){
+        this.jwtAuthFilter = jwtAuthFilter;
+    }
+
     //A new blank SecurityFilterChain Object is created.
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) {
@@ -36,7 +47,10 @@ public class SecurityConfig {
                                 .anyRequest().authenticated()
                 )
                 //httpBasic enables Basic Auth in your program
-                .httpBasic(Customizer.withDefaults());
+                //.httpBasic(Customizer.withDefaults());
+
+                //add JwtAuth now
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         //build returns a DefaultSecurityFilterChain
         return httpSecurity.build();

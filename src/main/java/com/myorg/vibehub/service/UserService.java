@@ -1,9 +1,11 @@
 package com.myorg.vibehub.service;
 
 import com.myorg.vibehub.dto.request.CountryRequestDto;
+import com.myorg.vibehub.dto.request.LoginRequestDto;
 import com.myorg.vibehub.dto.request.ProfilePictureRequestDto;
 import com.myorg.vibehub.dto.request.UserRequestDto;
 import com.myorg.vibehub.dto.response.GenericResponseDto;
+import com.myorg.vibehub.dto.response.LoginResponseDto;
 import com.myorg.vibehub.dto.response.UserResponseDto;
 import com.myorg.vibehub.enums.Gender;
 import com.myorg.vibehub.model.User;
@@ -37,5 +39,8 @@ public interface UserService {
 
     //Country
     GenericResponseDto uploadCountry(Long id, CountryRequestDto countryRequestDto);
+
+    //Login by token
+    GenericResponseDto login(LoginRequestDto loginRequestDto);
 
 }
