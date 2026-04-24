@@ -262,7 +262,7 @@ public class UserServiceImpl implements UserService {
       if(passwordEncoder.matches(loginRequestDto.getPassword(), password)){
           //if matched - generate token.
           //generatetoken is a method we made in jwtUtil so make its bean
-          String token = jwtUtil.generateToken(user.getUsername());
+          String token = jwtUtil.generateToken(user);
 
           //if all good, add details in generic response dto
           genericResponseDto.setIsSuccess(true);

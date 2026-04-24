@@ -1,5 +1,6 @@
 package com.myorg.vibehub.utility;
 
+import com.myorg.vibehub.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -29,10 +30,11 @@ public class JwtUtil {
         AUTH_EXPIRATION = 1000 * 60 * 2; //2 mins
     }
     //method to generate token on the basis of username as the unique identifier-
-    public String generateToken(String username) {
+    public String generateToken(User user) {
 
         return Jwts.builder()
-                .subject(username)
+                .subject(user.getUsername())
+                .claim("role",user.getRole())
                 .issuedAt(new Date())
                 //current time + 2 mins = expiration
                 .expiration(new Date(System.currentTimeMillis() + AUTH_EXPIRATION))
