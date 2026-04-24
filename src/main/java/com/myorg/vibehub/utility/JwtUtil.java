@@ -1,8 +1,10 @@
 package com.myorg.vibehub.utility;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -36,6 +38,32 @@ public class JwtUtil {
                 .expiration(new Date(System.currentTimeMillis() + AUTH_EXPIRATION))
                 .signWith(KEY,Jwts.SIG.HS256)
                 .compact();
+    }
+
+    //Method to extract Username
+    public String extractUsername(String token){
+        //from claims, you extract subject = username
+        return getClaims(token).getSubject();
+    }
+
+    //Method to get Claims
+    private Claims getClaims(String token){
+     return Jwts.parser()
+             .verifyWith(KEY)//verify token is correct for security purpose-checks expire too
+             .build() //returns jwtparser
+             .parseSignedClaims(token)
+             .getPayload();//returns payload, also called claims
+    }
+
+    //these two methods are not needed as now, you can not get claim now until token is validated
+    //Validate/match user from token and userdetails
+    public boolean validateToken(String username, UserDetails userDetails, String token){
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+    public boolean isTokenExpired(String token){
+        //checks is token is expired before current time.if true-expired,false-valid
+       return getClaims(token).getExpiration().before(new Date());
     }
 
 }
