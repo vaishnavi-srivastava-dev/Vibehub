@@ -43,7 +43,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             //extract username from real token
             username = jwtUtil.extractUsername(token);
-            //role = ;
+            role = jwtUtil.extractRole(token);
 
         }
 

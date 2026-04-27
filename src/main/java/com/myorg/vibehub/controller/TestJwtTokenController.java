@@ -1,5 +1,6 @@
 package com.myorg.vibehub.controller;
 
+import com.myorg.vibehub.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,8 +18,10 @@ public class TestJwtTokenController {
 
     //generate token
     @GetMapping
-    public String generateToken(@RequestParam String username){
-        return jwtUtil.generateToken(username);
+    //earlier String Username was taken as a parameter
+    public String generateToken(@RequestParam User user){
+        //return jwtUtil.generateToken(username);
+        return jwtUtil.generateToken(user);
     }
 
 }

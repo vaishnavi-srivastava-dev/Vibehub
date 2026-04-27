@@ -48,6 +48,11 @@ public class JwtUtil {
         return getClaims(token).getSubject();
     }
 
+    public String extractRole(String token){
+        //from claims, you extract subject = username
+        return getClaims(token).get("role", String.class);
+    }
+
     //Method to get Claims
     private Claims getClaims(String token){
      return Jwts.parser()
