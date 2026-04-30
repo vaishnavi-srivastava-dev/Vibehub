@@ -35,6 +35,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .subject(user.getUsername())
                 .claim("role",user.getRole())
+                .claim("name", user.getName())
                 .issuedAt(new Date())
                 //current time + 2 mins = expiration
                 .expiration(new Date(System.currentTimeMillis() + AUTH_EXPIRATION))
