@@ -27,7 +27,7 @@ import java.util.List;
         }
 
         @PostMapping
-        public ResponseEntity<UserResponseDto> registerUser(@RequestBody UserRequestDto userRequestDto) {
+        public ResponseEntity<UserResponseDto> registerUser( @RequestBody UserRequestDto userRequestDto) {
             return new ResponseEntity<>(userService.addUser(userRequestDto), HttpStatusCode.valueOf(201));
         }
 
